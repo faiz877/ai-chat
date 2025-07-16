@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useChatStore } from "../store/chatStore";
-import ChatroomInterface from "./ChatRoomInterface";
+import ChatroomInterface from "./ChatroomInterface";
 import { toast } from "react-hot-toast";
+import { useAuthStore } from "../store/authStore";
 
 const Dashboard: React.FC = () => {
   const {
@@ -14,6 +15,7 @@ const Dashboard: React.FC = () => {
   const [newChatroomName, setNewChatroomName] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
+  const logout = useAuthStore((state) => state.logout);
 
   // Debounce search term logic
   useEffect(() => {
@@ -56,12 +58,30 @@ const Dashboard: React.FC = () => {
         {/* Header with Moon Icon - Global UX */}
         <div className='flex justify-between items-center mb-4'>
           <h1 className='text-3xl font-extrabold'>Gemini</h1>
-          {/* TODO: Implement Dark Mode Toggle (Global UX) - For now, just icon */}
-          <button className='text-gray-500 hover:text-white p-2 rounded-full hover:bg-gray-700 transition duration-150'>
-            🌙 {/* Moon icon */}
+          {/* Logout button with icon in top right */}
+          <button
+            onClick={logout}
+            className='text-gray-500 hover:text-red-500 p-2 rounded-full hover:bg-gray-700 transition duration-150 focus:outline-none focus:ring-2 focus:ring-red-500'
+            aria-label='Logout'
+            title='Logout'
+          >
+            {/* Logout icon (arrow right from a door) */}
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              className='h-6 w-6'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1'
+              />
+            </svg>
           </button>
         </div>
-
         <h2 className='text-2xl font-bold mb-4'>Conversations</h2>
         <div className='mb-4 flex space-x-2'>
           <input
