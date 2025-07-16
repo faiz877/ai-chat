@@ -24,19 +24,8 @@ const ChatroomInterface: React.FC = () => {
     setMessagesToDisplay(MESSAGES_PER_PAGE);
   }, [currentChatroom?.id]);
 
-  // Auto-scroll when new messages are added, but only if user is near bottom
   useEffect(() => {
-    if (messagesEndRef.current) {
-      const container = messagesContainerRef.current;
-      if (container) {
-        const isScrolledToBottom =
-          container.scrollHeight - container.clientHeight <=
-          container.scrollTop + 50; // 50px buffer
-        if (isScrolledToBottom) {
-          messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-        }
-      }
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentChatroom?.messages.length]); // Only react to message count change
 
   const genericResponses = [
@@ -110,6 +99,18 @@ const ChatroomInterface: React.FC = () => {
   };
 
   const loadOlderMessages = () => {
+    // In a real app, you'd fetch older messages from an API
+    // Here, we'll just add some dummy messages for demonstration
+    const olderMessages = Array.from({ length: MESSAGES_PER_PAGE }, (_, i) => ({
+      id: `older-message-${Date.now()}-${i}`,
+      content: `Older message ${currentChatroom!.messages.length - messagesToDisplay - i}`,
+      timestamp: new Date().toISOString(),
+      isUser: Math.random() > 0.5,
+    }));
+
+    // This is a simplified way to add older messages. In a real app,
+    // you would prepend them to the messages array in your state management.
+    // For this example, we'll just increase the number of messages to display.
     setMessagesToDisplay((prev) => prev + MESSAGES_PER_PAGE);
   };
 
@@ -119,6 +120,18 @@ const ChatroomInterface: React.FC = () => {
 
   const hasMoreMessages =
     currentChatroom && currentChatroom.messages.length > messagesToDisplay;
+
+  const handleScroll = () => {
+    if (messagesContainerRef.current?.scrollTop === 0 && hasMoreMessages) {
+      loadOlderMessages();
+    }
+  };
+
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    container?.addEventListener("scroll", handleScroll);
+    return () => container?.removeEventListener("scroll", handleScroll);
+  }, [hasMoreMessages]);
 
   if (!currentChatroom) {
     return (
@@ -264,8 +277,9 @@ const ChatroomInterface: React.FC = () => {
           className='flex-1 p-3 rounded-full bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500 text-white'
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === "Enter" && !isAiTyping && messageInput.trim()) {
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey && !isAiTyping && messageInput.trim()) {
+              e.preventDefault();
               handleSendMessage();
             }
           }}

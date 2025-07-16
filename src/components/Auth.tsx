@@ -164,6 +164,8 @@ function Auth() {
             <div className='mb-3'>
               <select
                 {...register("countryCode")}
+                id="country-code"
+                aria-describedby="country-code-error"
                 onChange={handleCountryChange}
                 className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200 ${
                   theme === "light"
@@ -180,7 +182,7 @@ function Auth() {
                 ))}
               </select>
               {errors.countryCode && (
-                <p className='text-red-400 text-xs mt-2'>
+                <p id="country-code-error" className='text-red-400 text-xs mt-2'>
                   {errors.countryCode.message}
                 </p>
               )}
@@ -208,6 +210,7 @@ function Auth() {
                   type='tel'
                   placeholder='Phone number'
                   autoComplete='tel'
+                  aria-describedby="phone-error"
                   className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200 ${
                     theme === "light"
                       ? "bg-white border-gray-300 text-gray-900 placeholder-gray-400"
@@ -215,7 +218,7 @@ function Auth() {
                   }`}
                 />
                 {errors.phone && (
-                  <p className='text-red-400 text-xs mt-2'>
+                  <p id="phone-error" className='text-red-400 text-xs mt-2'>
                     {errors.phone.message}
                   </p>
                 )}
