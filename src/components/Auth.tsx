@@ -82,7 +82,7 @@ function Auth() {
 
   return (
     <div
-      className={`flex flex-col items-center justify-center min-h-screen bg-gray-950 text-white p-4 font-sans transition-colors duration-300 ${
+      className={`flex flex-col items-center justify-center min-h-screen bg-gray-950 text-white p-4 sm:p-6 md:p-4 font-sans transition-colors duration-300 ${
         theme === "light"
           ? "bg-gray-100 text-gray-900"
           : "bg-gray-950 text-white"
@@ -140,14 +140,14 @@ function Auth() {
       </div>
       {/* Card wrapper for the form */}
       <div
-        className={`w-full max-w-lg rounded-xl shadow-lg p-8 transition-colors duration-300 ${
+        className={`w-full max-w-md rounded-xl shadow-lg p-6 md:p-8 transition-colors duration-300 ${
           theme === "light"
             ? "bg-white border border-gray-200"
             : "bg-gray-900 border border-gray-800"
         }`}
       >
-        <div className='text-center mb-8'>
-          <h1 className='text-4xl font-bold mb-2'>Welcome to Gemini</h1>
+        <div className='text-center mb-6 md:mb-8'>
+          <h1 className='text-3xl md:text-4xl font-bold mb-2'>Welcome to Gemini</h1>
           <p className='text-gray-400 dark:text-gray-400 light:text-gray-600'>
             Sign in to continue
           </p>

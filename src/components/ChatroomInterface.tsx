@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useChatStore } from "../store/chatStore";
+import toast from "react-hot-toast";
 
 const MESSAGES_PER_PAGE = 20; // Define messages per page for pagination
 
@@ -38,6 +39,20 @@ const ChatroomInterface: React.FC = () => {
     }
   }, [currentChatroom?.messages.length]); // Only react to message count change
 
+  const genericResponses = [
+    'Understood: "{message}". I am here to help you.',
+    "I've received your message: \"{message}\". I'm processing it.",
+    'Thanks for your input: "{message}". Let me look into that.',
+    'Message "{message}" received. I\'m here to assist.',
+    'Got it: "{message}". How can I help further?',
+    'Acknowledged: "{message}". I am ready for your next instruction.',
+    'Your message "{message}" has been noted.',
+    'Understood: "{message}". I\'m on it.',
+    'Thank you for sharing: "{message}". What\'s next?',
+    'Processing "{message}". Please give me a moment.',
+  ];
+  const responseIndex = useRef(0);
+
   const handleSendMessage = () => {
     if (!currentChatroom) return;
 
@@ -53,8 +68,11 @@ const ChatroomInterface: React.FC = () => {
 
     // 3. Simulate delayed AI response with throttling
     setTimeout(() => {
-      const aiResponse = `Understood: "${trimmedMessage}". I am here to help you.`;
+      const responseTemplate = genericResponses[responseIndex.current];
+      const aiResponse = responseTemplate.replace("{message}", trimmedMessage);
       addMessage(currentChatroom.id, aiResponse, false);
+      responseIndex.current =
+        (responseIndex.current + 1) % genericResponses.length;
       setIsAiTyping(false);
     }, 1500 + Math.random() * 1000); // 1.5 to 2.5 seconds delay
   };
@@ -62,7 +80,7 @@ const ChatroomInterface: React.FC = () => {
   const copyToClipboard = (text: string) => {
     navigator.clipboard
       .writeText(text)
-      .then(() => console.log("Message copied to clipboard!")) // Using console.log, no toast/alert
+      .then(() => toast.success("Message copied to clipboard!"))
       .catch(() => console.error("Failed to copy message."));
   };
 
@@ -112,20 +130,13 @@ const ChatroomInterface: React.FC = () => {
     );
   }
 
-  // Basic Loading Skeleton for Messages
-  const MessageSkeleton = () => (
-    <div className='flex justify-start'>
-      <div className='max-w-xl p-3 rounded-lg bg-gray-700 animate-pulse h-12 w-3/4'></div>
-    </div>
-  );
-
   return (
     <div className='flex flex-col h-full bg-gray-900 text-white'>
       {/* Chatroom Header */}
       <div className='flex items-center p-4 border-b border-gray-700 bg-gray-800'>
         <button
           onClick={() => setCurrentChatroom(null)}
-          className='text-gray-400 hover:text-white mr-4 p-2 rounded-full hover:bg-gray-700 transition duration-150'
+          className='text-gray-400 hover:text-white mr-4 p-2 rounded-full hover:bg-gray-700 transition duration-150 md:hidden'
           aria-label='Back to chatrooms'
         >
           <svg
@@ -144,22 +155,6 @@ const ChatroomInterface: React.FC = () => {
           </svg>
         </button>
         <h2 className='text-xl font-bold'>{currentChatroom.name}</h2>
-        <div className='ml-auto text-gray-500 cursor-pointer hover:text-white transition duration-150'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            className='h-6 w-6'
-            fill='none'
-            viewBox='0 0 24 24'
-            stroke='currentColor'
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-            />
-          </svg>
-        </div>
       </div>
 
       {/* Messages Display Area */}
@@ -224,8 +219,11 @@ const ChatroomInterface: React.FC = () => {
           </div>
         ))}
         {isAiTyping && (
-          // Displaying a simple skeleton for AI typing to fulfill the requirement
-          <MessageSkeleton />
+          <div className='flex justify-start'>
+            <div className='max-w-xl p-3 rounded-lg bg-gray-700'>
+              <p className='text-gray-300'>Gemini is thinking...</p>
+            </div>
+          </div>
         )}
         <div ref={messagesEndRef} /> {/* For auto-scroll */}
       </div>

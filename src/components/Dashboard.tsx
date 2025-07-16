@@ -54,7 +54,11 @@ const Dashboard: React.FC = () => {
   return (
     <div className='flex h-screen bg-gray-900 text-white'>
       {/* Sidebar for Chatroom List */}
-      <div className='w-1/4 p-4 border-r border-gray-700 flex flex-col'>
+      <div
+        className={`w-full md:w-1/3 lg:w-1/4 p-4 border-r border-gray-700 flex-col ${
+          currentChatroomId ? "hidden md:flex" : "flex"
+        }`}
+      >
         {/* Header with Moon Icon - Global UX */}
         <div className='flex justify-between items-center mb-4'>
           <h1 className='text-3xl font-extrabold'>Gemini</h1>
@@ -200,7 +204,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Main Content Area - Conditionally render ChatroomInterface */}
-      <div className='flex-1'>
+      <div className={`flex-1 ${currentChatroomId ? "" : "hidden md:flex"}`}>
         {currentChatroomId ? (
           <ChatroomInterface />
         ) : (
