@@ -52,12 +52,10 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className='flex h-screen bg-gray-900 text-white'>
+    <div className="flex h-screen bg-gray-900 text-white">
       {/* Sidebar for Chatroom List */}
       <div
-        className={`w-full md:w-1/3 lg:w-1/4 p-4 border-r border-gray-700 flex-col ${
-          currentChatroomId ? "hidden md:flex" : "flex"
-        }`}
+        className={`w-full md:w-1/3 lg:w-1/4 p-4 border-r border-gray-700 flex-col ${currentChatroomId ? "hidden md:flex" : "flex"}`}
       >
         {/* Header with Moon Icon - Global UX */}
         <div className='flex justify-between items-center mb-4'>
@@ -204,12 +202,12 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Main Content Area - Conditionally render ChatroomInterface */}
-      <div className={`flex-1 ${currentChatroomId ? "" : "hidden md:flex"}`}>
+      <div className={`flex-1 ${currentChatroomId ? "flex flex-col h-full" : "hidden md:flex flex-col h-full"}`}>
         {currentChatroomId ? (
           <ChatroomInterface />
         ) : (
-          <div className='flex items-center justify-center h-full'>
-            <p className='text-gray-400 text-lg'>
+          <div className="flex-1 flex items-center justify-center w-full h-full">
+            <p className="text-gray-400 text-lg">
               Select a chatroom or create a new one to start chatting.
             </p>
           </div>

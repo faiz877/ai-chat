@@ -27,7 +27,32 @@ interface ChatState {
 export const useChatStore = create<ChatState>()(
   persist(
     (set) => ({
-      chatrooms: [],
+      chatrooms: [
+        {
+          id: uuidv4(),
+          name: "Project Discussion",
+          messages: [
+            { id: uuidv4(), content: "Hey, can you help me with the Gemini assignment?", timestamp: Date.now() - 1000000, isUser: true },
+            { id: uuidv4(), content: "Of course! What do you need help with?", timestamp: Date.now() - 999000, isUser: false },
+          ],
+        },
+        {
+          id: uuidv4(),
+          name: "AI Research",
+          messages: [
+            { id: uuidv4(), content: "What is the latest in AI research?", timestamp: Date.now() - 2000000, isUser: true },
+            { id: uuidv4(), content: "There are many exciting developments in AI!", timestamp: Date.now() - 1999000, isUser: false },
+          ],
+        },
+        {
+          id: uuidv4(),
+          name: "Dinner Plans",
+          messages: [
+            { id: uuidv4(), content: "Tell me a joke!", timestamp: Date.now() - 3000000, isUser: true },
+            { id: uuidv4(), content: "Why did the AI cross the road? To optimize the chicken!", timestamp: Date.now() - 2999000, isUser: false },
+          ],
+        },
+      ],
       currentChatroomId: null,
 
       addChatroom: (name) =>

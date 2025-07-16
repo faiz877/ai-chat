@@ -129,7 +129,7 @@ const ChatroomInterface: React.FC = () => {
 
   if (!currentChatroom) {
     return (
-      <div className='flex-1 p-4 flex items-center justify-center bg-gray-900 text-white'>
+      <div className='w-full min-h-screen flex items-center justify-center bg-gray-900 text-white'>
         <p className='text-gray-400 text-lg'>
           Please select a chatroom from the left, or create a new one.
         </p>
