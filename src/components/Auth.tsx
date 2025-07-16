@@ -88,56 +88,6 @@ function Auth() {
           : "bg-gray-950 text-white"
       }`}
     >
-      {/* Top right theme toggle */}
-      <div className='absolute top-4 right-4'>
-        <button
-          onClick={toggleTheme}
-          className='p-2 rounded-full border border-gray-700 bg-gray-800 hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white light:bg-white light:text-gray-900'
-          aria-label='Toggle dark/light mode'
-        >
-          {theme === "dark" ? (
-            // Moon icon
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              className='h-6 w-6'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z'
-              />
-            </svg>
-          ) : (
-            // Sun icon
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              className='h-6 w-6'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-              strokeWidth={2}
-            >
-              <circle
-                cx='12'
-                cy='12'
-                r='5'
-                stroke='currentColor'
-                strokeWidth='2'
-                fill='none'
-              />
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 6.95l-1.41-1.41M6.46 6.46L5.05 5.05m13.9 0l-1.41 1.41M6.46 17.54l-1.41 1.41'
-              />
-            </svg>
-          )}
-        </button>
-      </div>
       {/* Card wrapper for the form */}
       <div
         className={`w-full max-w-md rounded-xl shadow-lg p-6 md:p-8 transition-colors duration-300 ${
@@ -147,7 +97,9 @@ function Auth() {
         }`}
       >
         <div className='text-center mb-6 md:mb-8'>
-          <h1 className='text-3xl md:text-4xl font-bold mb-2'>Welcome to Gemini</h1>
+          <h1 className='text-3xl md:text-4xl font-bold mb-2'>
+            Welcome to Gemini
+          </h1>
           <p className='text-gray-400 dark:text-gray-400 light:text-gray-600'>
             Sign in to continue
           </p>
@@ -164,8 +116,8 @@ function Auth() {
             <div className='mb-3'>
               <select
                 {...register("countryCode")}
-                id="country-code"
-                aria-describedby="country-code-error"
+                id='country-code'
+                aria-describedby='country-code-error'
                 onChange={handleCountryChange}
                 className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200 ${
                   theme === "light"
@@ -182,7 +134,10 @@ function Auth() {
                 ))}
               </select>
               {errors.countryCode && (
-                <p id="country-code-error" className='text-red-400 text-xs mt-2'>
+                <p
+                  id='country-code-error'
+                  className='text-red-400 text-xs mt-2'
+                >
                   {errors.countryCode.message}
                 </p>
               )}
@@ -210,7 +165,7 @@ function Auth() {
                   type='tel'
                   placeholder='Phone number'
                   autoComplete='tel'
-                  aria-describedby="phone-error"
+                  aria-describedby='phone-error'
                   className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200 ${
                     theme === "light"
                       ? "bg-white border-gray-300 text-gray-900 placeholder-gray-400"
@@ -218,7 +173,7 @@ function Auth() {
                   }`}
                 />
                 {errors.phone && (
-                  <p id="phone-error" className='text-red-400 text-xs mt-2'>
+                  <p id='phone-error' className='text-red-400 text-xs mt-2'>
                     {errors.phone.message}
                   </p>
                 )}
