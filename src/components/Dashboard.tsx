@@ -1,40 +1,73 @@
-// src/components/Dashboard.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useChatStore } from "../store/chatStore";
+import ChatroomInterface from "./ChatRoomInterface";
+import { toast } from "react-hot-toast";
 
 const Dashboard: React.FC = () => {
-  const { chatrooms, addChatroom, deleteChatroom, setCurrentChatroom } =
-    useChatStore();
+  const {
+    chatrooms,
+    addChatroom,
+    deleteChatroom,
+    setCurrentChatroom,
+    currentChatroomId,
+  } = useChatStore();
   const [newChatroomName, setNewChatroomName] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
+
+  // Debounce search term logic
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300); // 300ms debounce
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
+
+  const filteredChatrooms = chatrooms.filter((room) =>
+    room.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+  );
 
   const handleCreateChatroom = () => {
     if (newChatroomName.trim()) {
       addChatroom(newChatroomName.trim());
       setNewChatroomName("");
-      // TODO: Show toast notification for chatroom created
+      toast.success("Chatroom created!");
+    } else {
+      toast.error("Chatroom name cannot be empty.");
     }
   };
 
   const handleDeleteChatroom = (id: string) => {
     deleteChatroom(id);
-    // TODO: Show toast notification for chatroom deleted
+    toast.success("Chatroom deleted!");
   };
 
   const handleSelectChatroom = (id: string) => {
     setCurrentChatroom(id);
-    // TODO: Navigate to the chatroom interface (ChatroomInterface component)
   };
 
   return (
     <div className='flex h-screen bg-gray-900 text-white'>
       {/* Sidebar for Chatroom List */}
-      <div className='w-1/4 p-4 border-r border-gray-700'>
+      <div className='w-1/4 p-4 border-r border-gray-700 flex flex-col'>
+        {/* Header with Moon Icon - Global UX */}
+        <div className='flex justify-between items-center mb-4'>
+          <h1 className='text-3xl font-extrabold'>Gemini</h1>
+          {/* TODO: Implement Dark Mode Toggle (Global UX) - For now, just icon */}
+          <button className='text-gray-500 hover:text-white p-2 rounded-full hover:bg-gray-700 transition duration-150'>
+            🌙 {/* Moon icon */}
+          </button>
+        </div>
+
         <h2 className='text-2xl font-bold mb-4'>Conversations</h2>
-        <div className='mb-4'>
+        <div className='mb-4 flex space-x-2'>
           <input
             type='text'
             placeholder='New chatroom name...'
-            className='w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500'
+            className='flex-grow p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500 text-white'
             value={newChatroomName}
             onChange={(e) => setNewChatroomName(e.target.value)}
             onKeyPress={(e) => {
@@ -45,41 +78,72 @@ const Dashboard: React.FC = () => {
           />
           <button
             onClick={handleCreateChatroom}
-            className='mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+            className='flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150'
           >
-            + New Chatroom
+            + New
           </button>
         </div>
 
-        {/* Search Bar - placeholder for now */}
+        {/* Search Bar - Debounced */}
         <div className='mb-4'>
-          <input
-            type='text'
-            placeholder='Search conversations...'
-            className='w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500'
-            // TODO: Implement debounced search filter here
-          />
+          <div className='relative'>
+            <input
+              type='text'
+              placeholder='Search conversations...'
+              className='w-full p-2 pl-10 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500 text-white'
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <svg
+              className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+              />
+            </svg>
+          </div>
         </div>
 
         {/* List of Chatrooms */}
-        <div className='space-y-2'>
-          {chatrooms.length === 0 ? (
-            <p className='text-gray-500'>No chatrooms yet. Create one!</p>
+        <div className='space-y-2 flex-grow overflow-y-auto'>
+          {filteredChatrooms.length === 0 ? (
+            <p className='text-gray-500'>No chatrooms found. Create one!</p>
           ) : (
-            chatrooms.map((room) => (
+            filteredChatrooms.map((room) => (
               <div
                 key={room.id}
-                className='flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-700 cursor-pointer'
+                className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition duration-150 ${
+                  currentChatroomId === room.id
+                    ? "bg-gray-700"
+                    : "bg-gray-800 hover:bg-gray-700"
+                }`}
                 onClick={() => handleSelectChatroom(room.id)}
+                role='button' // For accessibility
+                tabIndex={0} // For keyboard accessibility
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleSelectChatroom(room.id);
+                  }
+                }}
               >
                 <div>
                   <h3 className='font-semibold'>{room.name}</h3>
-                  {/* TODO: Display last message and time, message count as per UI */}
                   <p className='text-sm text-gray-400'>
                     {room.messages.length > 0
                       ? room.messages[
                           room.messages.length - 1
-                        ].content.substring(0, 30) + "..." // Display truncated last message
+                        ].content.substring(0, 30) +
+                        (room.messages[room.messages.length - 1].content
+                          .length > 30
+                          ? "..."
+                          : "")
                       : "No messages"}
                   </p>
                   <p className='text-xs text-gray-500'>
@@ -88,14 +152,26 @@ const Dashboard: React.FC = () => {
                 </div>
                 <button
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent selecting chatroom when deleting
+                    e.stopPropagation();
                     handleDeleteChatroom(room.id);
                   }}
-                  className='text-gray-400 hover:text-red-500 p-1 rounded-full hover:bg-gray-600'
+                  className='text-gray-400 hover:text-red-500 p-1 rounded-full hover:bg-gray-600 transition duration-150'
                   aria-label={`Delete chatroom ${room.name}`}
                 >
-                  {/* Basic trash icon, replace with actual icon library later */}
-                  🗑️
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    className='h-5 w-5'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'
+                    />
+                  </svg>
                 </button>
               </div>
             ))
@@ -103,16 +179,17 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Content Area - Initially empty or welcome message */}
-      <div className='flex-1 p-4 flex items-center justify-center'>
-        {/*
-          TODO: This is where the ChatroomInterface component will be rendered
-          based on `currentChatroomId`. You'll need to conditionally render it.
-          For now, a simple message:
-        */}
-        <p className='text-gray-400 text-lg'>
-          Select a chatroom or create a new one to start chatting.
-        </p>
+      {/* Main Content Area - Conditionally render ChatroomInterface */}
+      <div className='flex-1'>
+        {currentChatroomId ? (
+          <ChatroomInterface />
+        ) : (
+          <div className='flex items-center justify-center h-full'>
+            <p className='text-gray-400 text-lg'>
+              Select a chatroom or create a new one to start chatting.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

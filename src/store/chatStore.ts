@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { v4 as uuidv4 } from "uuid";
 
 interface Message {
@@ -23,36 +24,47 @@ interface ChatState {
   setCurrentChatroom: (id: string | null) => void;
 }
 
-export const useChatStore = create<ChatState>((set) => ({
-  chatrooms: [],
-  currentChatroomId: null,
+export const useChatStore = create<ChatState>()(
+  persist(
+    (set) => ({
+      chatrooms: [],
+      currentChatroomId: null,
 
-  addChatroom: (name) =>
-    set((state) => ({
-      chatrooms: [...state.chatrooms, { id: uuidv4(), name, messages: [] }],
-    })),
+      addChatroom: (name) =>
+        set((state) => ({
+          chatrooms: [...state.chatrooms, { id: uuidv4(), name, messages: [] }],
+        })),
 
-  deleteChatroom: (id) =>
-    set((state) => ({
-      chatrooms: state.chatrooms.filter((room) => room.id !== id),
-      currentChatroomId:
-        state.currentChatroomId === id ? null : state.currentChatroomId,
-    })),
+      deleteChatroom: (id) =>
+        set((state) => ({
+          chatrooms: state.chatrooms.filter((room) => room.id !== id),
+          currentChatroomId:
+            state.currentChatroomId === id ? null : state.currentChatroomId,
+        })),
 
-  addMessage: (chatRoomId, content, isUser) =>
-    set((state) => ({
-      chatrooms: state.chatrooms.map((room) =>
-        room.id === chatRoomId
-          ? {
-              ...room,
-              messages: [
-                ...room.messages,
-                { id: uuidv4(), content, timestamp: Date.now(), isUser },
-              ],
-            }
-          : room
-      ),
-    })),
+      addMessage: (chatRoomId, content, isUser) =>
+        set((state) => ({
+          chatrooms: state.chatrooms.map((room) =>
+            room.id === chatRoomId
+              ? {
+                  ...room,
+                  messages: [
+                    ...room.messages,
+                    { id: uuidv4(), content, timestamp: Date.now(), isUser },
+                  ],
+                }
+              : room
+          ),
+        })),
 
-  setCurrentChatroom: (id) => set(() => ({ currentChatroomId: id })),
-}));
+      setCurrentChatroom: (id) => set(() => ({ currentChatroomId: id })),
+    }),
+    {
+      name: "gemini-chat-storage",
+      partialize: (state) => ({
+        chatrooms: state.chatrooms,
+        currentChatroomId: state.currentChatroomId,
+      }),
+    }
+  )
+);
