@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import { v4 as uuidv4 } from "uuid"; 
+import { v4 as uuidv4 } from "uuid";
 
 interface Message {
   id: string;
   content: string;
   timestamp: number;
-  isUser: boolean; 
+  isUser: boolean;
 }
 
 interface Chatroom {
@@ -16,7 +16,7 @@ interface Chatroom {
 
 interface ChatState {
   chatrooms: Chatroom[];
-  currentChatroomId: string | null; 
+  currentChatroomId: string | null;
   addChatroom: (name: string) => void;
   deleteChatroom: (id: string) => void;
   addMessage: (chatRoomId: string, content: string, isUser: boolean) => void;
@@ -25,14 +25,11 @@ interface ChatState {
 
 export const useChatStore = create<ChatState>((set) => ({
   chatrooms: [],
-  currentChatroomId: null, 
+  currentChatroomId: null,
 
   addChatroom: (name) =>
     set((state) => ({
-      chatrooms: [
-        ...state.chatrooms,
-        { id: uuidv4(), name, messages: [] }, 
-      ],
+      chatrooms: [...state.chatrooms, { id: uuidv4(), name, messages: [] }],
     })),
 
   deleteChatroom: (id) =>
@@ -53,7 +50,7 @@ export const useChatStore = create<ChatState>((set) => ({
                 { id: uuidv4(), content, timestamp: Date.now(), isUser },
               ],
             }
-          : room,
+          : room
       ),
     })),
 
