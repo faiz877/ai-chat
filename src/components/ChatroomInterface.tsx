@@ -73,23 +73,17 @@ const ChatroomInterface: React.FC = () => {
       .catch(() => console.error("Failed to copy message."));
   };
 
-  // Image Upload (Base64/Preview URL) - Placeholder
+  // Image Upload (Base64/Preview URL)
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && currentChatroom) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        // In a full implementation, you'd store reader.result (base64) or a blob URL
-        // For functionality, we're just adding a text message indicating an image
-        addMessage(currentChatroom.id, `[Image: ${file.name}]`, true);
-
+        // Store the base64 data as the message content
+        addMessage(currentChatroom.id, reader.result as string, true);
         setIsAiTyping(true);
         setTimeout(() => {
-          addMessage(
-            currentChatroom.id,
-            "Image received. How can I help with this?",
-            false
-          );
+          addMessage(currentChatroom.id, "Image received. How can I help with this?", false);
           setIsAiTyping(false);
         }, 1500 + Math.random() * 1000);
       };
@@ -193,7 +187,15 @@ const ChatroomInterface: React.FC = () => {
                   : "bg-gray-700 text-gray-100"
               }`}
             >
-              <p>{message.content}</p>
+              {message.content.startsWith('data:image/') ? (
+                <img
+                  src={message.content}
+                  alt="Uploaded"
+                  className="rounded-lg max-w-xs max-h-60 mb-2 border border-gray-700"
+                />
+              ) : (
+                <p>{message.content}</p>
+              )}
               <span className='block text-right text-xs text-gray-300 mt-1'>
                 {new Date(message.timestamp).toLocaleTimeString([], {
                   hour: "2-digit",
