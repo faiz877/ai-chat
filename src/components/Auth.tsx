@@ -22,7 +22,7 @@ function Auth() {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [otpSent, setOtpSent] = useState(false);
   const login = useAuthStore((state) => state.login);
-  const { theme, toggleTheme } = useThemeStore();
+  const { theme } = useThemeStore();
 
   // Set theme on body
   useEffect(() => {

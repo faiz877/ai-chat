@@ -101,12 +101,6 @@ const ChatroomInterface: React.FC = () => {
   const loadOlderMessages = () => {
     // In a real app, you'd fetch older messages from an API
     // Here, we'll just add some dummy messages for demonstration
-    const olderMessages = Array.from({ length: MESSAGES_PER_PAGE }, (_, i) => ({
-      id: `older-message-${Date.now()}-${i}`,
-      content: `Older message ${currentChatroom!.messages.length - messagesToDisplay - i}`,
-      timestamp: new Date().toISOString(),
-      isUser: Math.random() > 0.5,
-    }));
 
     // This is a simplified way to add older messages. In a real app,
     // you would prepend them to the messages array in your state management.
@@ -278,7 +272,12 @@ const ChatroomInterface: React.FC = () => {
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey && !isAiTyping && messageInput.trim()) {
+            if (
+              e.key === "Enter" &&
+              !e.shiftKey &&
+              !isAiTyping &&
+              messageInput.trim()
+            ) {
               e.preventDefault();
               handleSendMessage();
             }
